@@ -1,5 +1,5 @@
  /* Day 2*/
- /*
+ 
  SELECT Count(ProductSubcategoryID)
  FROM Production.Product 
  
