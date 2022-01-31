@@ -1,0 +1,135 @@
+
+/* Day 4 */
+
+--10
+CREATE VIEW view_product_order_Ngene AS
+
+with productInfo(productNames, Quantity) as
+(
+	select p.ProductName, SUM(od.Quantity) as"Total Ordered Quantities"
+	FROM Products p LEFT JOIN [Order Details] od ON od.ProductID = p.ProductID JOIN Orders o ON od.OrderID= o.OrderID
+	Group By p.ProductName
+)
+
+SELECT productNames, Quantity
+FROM productInfo
+
+SELECT * FROM view_product_order_Ngene
+
+
+--11
+Create Proc sp_product_order_quantity_Ngene
+@id int,
+@Quantity1 int out
+AS
+Begin
+	Select @Quantity1 = SUM(Quantity)
+	From Products p LEFT JOIN [Order Details] od ON od.ProductID = p.ProductID
+	WHERE od.ProductID =@id
+	Group By p.ProductID
+
+end
+
+DROP proc sp_product_order_quantity_Ngene
+Declare @Quantities int
+Exec sp_product_order_quantity_Ngene 1, @Quantities out
+Select @Quantities
+
+--12
+Create Proc sp_product_order_city_Ngene
+@name varchar(30),
+@Top5 varchar(30) out
+AS
+Begin
+SELECT SUB1.City, SUB2.Quantity FROM(
+		Select TOP (5) c.City as "City", Count(p.ProductName) as "Counted"
+		From Products p LEFT JOIN [Order Details] od ON od.ProductID = p.ProductID LEFT JOIN Orders o ON od.OrderID= o.OrderID LEFT JOIN Customers c ON o.CustomerID = c.CustomerID
+		WHERE p.ProductName = @name
+		Group By c.City
+		Order By Count(p.ProductName) desc
+	) AS SUB1
+	LEFT JOIN
+	(
+		Select c.City as "City2", SUM(Quantity) as "Quantity"
+		From Products p LEFT JOIN [Order Details] od ON od.ProductID = p.ProductID LEFT JOIN Orders o ON od.OrderID= o.OrderID LEFT JOIN Customers c ON o.CustomerID = c.CustomerID
+		WHERE p.ProductName = @name
+		Group By c.City
+	)AS SUB2
+	ON SUB1.City = SUB2.City2
+	
+end
+
+DROP PROC sp_product_order_city_Ngene
+
+Declare @name1 varchar(30)
+Declare @top varchar(30)
+Exec sp_product_order_city_Ngene Konbu, @top out 
+Select @top
+
+SELECT p.ProductName, c.City, od.Quantity
+FROM Products p LEFT JOIN [Order Details] od ON od.ProductID = p.ProductID JOIN Orders o ON od.OrderID= o.OrderID JOIN Customers c ON o.CustomerID = c.CustomerID
+Order by c.City  
+
+--13
+Create Database Demo 
+use Demo
+
+Create table people_Ngene(
+id int Primary Key,
+Name varchar(30),
+City int Foreign Key references City_ngene(id) on delete set default
+)
+
+Create table City_Ngene(
+id int Primary Key  ,
+City varchar(20) default('Madison')
+)
+
+
+insert into City_Ngene values(
+ 1,'Seattle' )
+ insert into City_Ngene values(
+ 2,'Green Bay' )
+
+ insert into people_Ngene values(
+ 1,' Aaron Rodgers', 2)
+ insert into people_Ngene values(
+ 2,'Russel Wilson' , 1)
+ insert into people_Ngene values(
+ 3,'Jody Nelson' , 2)
+
+ delete from people_Ngene where id= 3;
+ delete from City_Ngene where City = 'Seattle';
+
+ SELECT * FROM City_Ngene
+  SELECT * FROM people_Ngene
+
+  SELECT p.id, p.Name, IsNull(c.City, 'Madison') as "City"
+  FROM people_ngene p LEFT JOIN city_ngene c ON  p.City =c.id
+  
+  CREATE VIEW Packers_Ngene AS 
+	select p.Name
+	FROM people_Ngene p left join city_ngene c on p.City = c.id
+	WHERE c.City = 'Green Bay'
+	
+
+SELECT *
+FROM Packers_Ngene
+
+--14
+Create Proc sp_birthday_employees_Ngene
+
+AS
+Begin
+	Declare @birthday_employees_Ngene table(id int Primary Key  ,employeeName varchar(30))
+	
+	insert into @birthday_employees_Ngene(id, employeeName)
+	SELECT e.EmployeeID, e.BirthDate
+	FROM Employees e
+	WHERE month(e.BirthDate) = 2
+
+End
+
+SELECT * FROM Employees
+
+Exec sp_birthday_employees_Ngene
