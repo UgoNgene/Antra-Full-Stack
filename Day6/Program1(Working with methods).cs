@@ -1,3 +1,5 @@
+// Ngene Gabriel Problem 1
+
 using System;
 namespace WorkingWithMethods
 {
@@ -6,10 +8,7 @@ namespace WorkingWithMethods
         
         public static int[] GenerateNumbers()
         {
-          
             int[] numbers = new int[10];
-       
-
             for(int i=0; i<numbers.Length; i++)
             {
                 numbers[i] = i + 1;
@@ -17,18 +16,15 @@ namespace WorkingWithMethods
       
             return numbers;
         }
+
         public static int[] GenerateNumbers(int arrayLength)
         {
-         
             int[] numbers = new int[arrayLength];
-
-
             for (int i = 0; i < numbers.Length; i++)
             {
                 numbers[i] = i + 1;
             }
             
-
             return numbers; 
         }
 
@@ -36,11 +32,9 @@ namespace WorkingWithMethods
         {
             int i = 0;
             int j = numbers.Length - 1;
-
             while (i < j)
             {
                 int temp = numbers[i];
-                
                 numbers[i] = numbers[j];
                 numbers[j] = temp;
                 i++;
